@@ -43,6 +43,7 @@ function set_up {
   iptables -t mangle -C DIVERT -j ACCEPT 2> /dev/null || echo "Creating iptables rule ACCEPT for DIVERT" && iptables -t mangle -A DIVERT -j ACCEPT
   ip rule show | grep "from all fwmark 0x1 lookup 100" > /dev/null || echo "Creating ip rule for marked packets" && ip rule add fwmark 1 lookup 100
   [ $(ip route show table 100 | wc -l) -lt 1 ] && echo "Creating ip route for marked packets" && ip route add local 0.0.0.0/0 dev lo table 100
+  iptables -t nat -A POSTROUTING ! -d 172.20.0.0/16 -o eth0 -j MASQUERADE
 }
 
 function reload_config {
